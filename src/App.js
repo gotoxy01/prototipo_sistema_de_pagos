@@ -9,14 +9,13 @@ function App() {
     const [usuario, setUsuario] = useState('');
     const [password, setPassword] = useState('');
 
-    
     // Esto evita que las instancias se borren cuando React actualiza la pantalla
     const anuncios = useRef({
         1: new Anuncio(1, "🌟 ¡Oferta! Zapatos al 50% de Descuento", 0.50),
         2: new Anuncio(2, "🍔 ¡Pide tu hamburguesa con envío gratis!", 0.75)
     });
 
-    //  clic en los anuncios
+    // clic en los anuncios
     const manejarClicAnuncio = (id) => {
         const anuncioObj = anuncios.current[id];
         const pagoRecibido = anuncioObj.registrarClic(); // Llamada al método del objeto
@@ -35,11 +34,23 @@ function App() {
         }
     };
 
+    // cerrar sesión para poder ver el cambio de vuelta
+    const manejarLogout = () => {
+        setIsAutenticado(false);
+        setUsuario('');
+        setPassword('');
+    };
+
     return (
-        <div className="contenedor">
+        <div className={`contenedor ${isAutenticado ? 'estado-conectado' : 'estado-desconectado'}`}>
+
+            <div className={`status-indicator ${isAutenticado ? 'bg-conectado' : 'bg-desconectado'}`}>
+                <span className="dot"></span>
+                {isAutenticado ? "Conectado a la Red" : "Requiere Autenticación"}
+            </div>
+
             {!isAutenticado ? (
-                
-                <div>
+                <div className="fade-in">
                     <h2>Wi-Fi Gratis</h2>
                     <p>Inicia sesión para acceder a Internet</p>
                     
@@ -65,8 +76,7 @@ function App() {
                     </form>
                 </div>
             ) : (
-
-                <div>
+                <div className="fade-in">
                     <h2>¡Autenticación Exitosa!</h2>
                     <p>Ya casi estás conectado...</p>
 
@@ -81,11 +91,15 @@ function App() {
                     >
                         Navegar en Internet
                     </button>
+
+                    <button className="btn-logout" onClick={manejarLogout}>
+                        Desconectar y Salir
+                    </button>
                 </div>
             )}
 
             <div className="consola">
-                Ingresos Generados : ${ingresosTotales.toFixed(2)}
+                Ingresos Generados: ${ingresosTotales.toFixed(2)}
             </div>
         </div>
     );
